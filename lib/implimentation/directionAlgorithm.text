@@ -1,0 +1,33 @@
+checking/correction map algorithm
+
+assume starting on the road
+
+first : check if start location is accurate
+possible solution : get location every 1 sec and wait until the Position.accuracy is relatively small, if value is 0.0 then the phone doesn't support location accuracy and start immediately
+
+second : on the first instruction there won't be any direction so only specify the compass direction
+
+third v2 : place dots every (1 or 1.5) the accuracy of the device with adding minimum distance on top of it, with the max dots being something like 5 or 6,
+after that the replacement is FIFO
+
+fourth v2 : get the directions from each dot to the next one and take the average direction of it,and compare it with the direction of the average dots postion
+to the next point, if the angle is more than (idk, 15 or 20) then it tell the user he is walking in the wrong direction and correct it using the correction angle equation
+
+fifth v2 : when the user gets close to the end point by a fixed distance, select the next point and display the instruction with the correction angle computed
+and repeat from step four. and reset the dots queue and only check step four if the queue is full
+
+sixth v2 : when the a new dot is placed and the average direction is returning wrong, iterate from the end point to the previous one and see the direction of each independently,
+check where the is the last correct direction, and direct the user to that dot.this starts a new route to that dot and makesthe current position
+the start point, after reaching it again, it becomes the new start point and the original end point returns and the user starts again accordingly,
+if the user fails to go back to said point or if all points are wrong direction then search for route again from the current point,maybe in case of first start don't reroute again ?
+
+
+max difference angle = tan inverse (distance from current point to start point/10)
+
+
+------DEPRECATED------
+third : check if the user walked double or 1.5 the accuracy of the device to start the journey, if the accuracy is 0.0 then use a fixed length to determine the start of the journey (10-15m for two iterations), additionally to the 1.5 accuracy there must be a minimum distance even if the accuracy is valid just to make sure
+fourth : get the direction from the start point to the current point and the direction from the start point to the end point to check angle, if the angle is more than [max difference angle] then tell the user he is walking in the wrong direction and correct it using the correction angle equation
+fifth : when the user gets close to the end point by a fixed distance, select the next point and display the instruction with the correction angle computed and repeat from step four. and set the check point to on the same line of the end point and the previous end point but with more distance
+sixth : always keep track of the (last of average) distance from the checkpoint to the user and the distance from the user to the end point so know if the user is making progress or not, ideas : if there is backward progress consistent in multiple user and possibly correct him, if the user proceeds to backward progress then re route and go back from the start, if there is no progress but no backward progress then just alarm the user after multiple iterations without being too annoying
+----------------------
